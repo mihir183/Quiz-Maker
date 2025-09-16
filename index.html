@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Quize Maker</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="assets/css/style.css">
+    </head>
+
+    <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+
+        <main class="w-full max-w-3xl mx-auto">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-bold text-[#6B8A7A]">QUIZ Maker App</h1>
+                <p class="text-lg sm:text-xl text-gray-600 mt-2">Upload a PDF or Image to generate MCQs.</p>
+            </header>
+
+            <div class="content-card rounded-lg p-6 sm:p-8">
+                <div id="upload-section">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Upload File</h2>
+                    <p class="text-gray-600 mb-6">Select a PDF or Image file, then choose how many MCQs you want to
+                        generate.</p>
+                    <div id="upload-form"
+                        class="flex flex-col items-center justify-center gap-4 border-2 border-dashed border-gray-300 rounded-lg p-8">
+                        <label for="pdf-input" class="w-full flex flex-col items-center cursor-pointer">
+                            <div class="text-6xl text-gray-400">📄</div>
+                            <span id="file-name" class="mt-2 text-sm text-gray-600 text-center">Drag & Drop your PDF or
+                                Image here, or click to browse</span>
+                            <input type="file" id="pdf-input" class="hidden" accept=".pdf,image/*">
+                        </label>
+
+                        <!-- NEW INPUT for number of MCQs -->
+                        <div class="mt-2 w-full flex justify-center">
+                            <input id="num-questions" type="number" min="1" max="50" value="5"
+                                class="p-2 border rounded w-32 text-center" />
+                        </div>
+
+                        <button id="run-btn"
+                            class="btn-primary w-full max-w-xs px-6 py-3 rounded-lg font-semibold mt-4">Generate
+                            MCQs</button>
+                        <div id="error-message" class="hidden text-red-500 text-sm mt-2">Please select a file first.
+                        </div>
+                    </div>
+                </div>
+
+                <div id="loading-spinner"
+                    class="hidden flex flex-col items-center justify-center gap-4 text-center mt-8">
+                    <div class="spinner"></div>
+                    <p class="text-lg text-gray-700 font-medium">Extracting text and generating MCQs...</p>
+                    <p class="text-sm text-gray-500 italic">Please wait, this may take a few seconds.</p>
+                </div>
+
+                <div id="results-container" class="hidden mt-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Generated MCQs</h2>
+                    <pre id="extracted-text-output" class="code-block"></pre>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const pdfInput = document.getElementById('pdf-input');
+                const runBtn = document.getElementById('run-btn');
+                const fileNameSpan = document.getElementById('file-name');
+                const errorMessage = document.getElementById('error-message');
+                const numQuestionsInput = document.getElementById('num-questions');
+
+                runBtn.addEventListener('click', async () => {
+                    if (pdfInput.files.length === 0) {
+                        errorMessage.classList.remove('hidden');
+                        return;
+                    }
+                    errorMessage.classList.add('hidden');
+
+                    const file = pdfInput.files[0];
+                    const numQuestions = numQuestionsInput.value || 5;
+
+                    const form = new FormData();
+                    form.append('file', file);
+                    form.append('num_questions', numQuestions);
+
+                    try {
+                        const resp = await fetch('http://localhost:8001/generate-mcqs', {
+                            method: 'POST',
+                            body: form
+                        });
+
+                        const data = await resp.json();
+
+                        if (!resp.ok) {
+                            if (data.redirect) {
+                                alert(data.message);
+                                window.location.href = data.redirect;
+                                return;
+                            }
+                            throw new Error(data.message || 'Server error');
+                        }
+
+                        // ✅ Success → Open results in new page
+                        localStorage.setItem("mcqsData", JSON.stringify(data.mcqs));
+                        window.location.href = "result.html";
+
+                    } catch (err) {
+                        alert("Error: " + (err.message || err));
+                    }
+                });
+
+                pdfInput.addEventListener('change', () => {
+                    if (pdfInput.files.length > 0) {
+                        fileNameSpan.textContent = pdfInput.files[0].name;
+                    } else {
+                        fileNameSpan.textContent = 'Drag & Drop your PDF here, or click to browse';
+                    }
+                });
+
+                const uploadForm = document.getElementById('upload-form');
+                uploadForm.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadForm.classList.add('border-green-500');
+                });
+                uploadForm.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    uploadForm.classList.remove('border-green-500');
+                });
+                uploadForm.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadForm.classList.remove('border-green-500');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        pdfInput.files = files;
+                        if (pdfInput.files.length > 0) {
+                            fileNameSpan.textContent = pdfInput.files[0].name;
+                        }
+                    }
+                });
+            });
+        </script>
+
+    </body>
+
+</html>

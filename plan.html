@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Maker - Premium Plans</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FDFBF8;
+      color: #4A4A4A;
+    }
+
+    .btn-primary {
+      background-color: #6B8A7A;
+      color: #FFFFFF;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #5A7569;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .plan-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .popular {
+      border: 2px solid #6B8A7A;
+      position: relative;
+    }
+
+    .popular::before {
+      content: "Most Popular";
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #6B8A7A;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="min-h-screen flex flex-col items-center justify-center p-6">
+    <h1 class="text-4xl font-bold text-[#6B8A7A] mb-4">Upgrade to Premium</h1>
+    <p class="mb-10 text-lg text-gray-600 text-center max-w-2xl">
+      Free users can generate up to <b>15 MCQs</b>. Unlock <span class="text-[#6B8A7A] font-semibold">unlimited MCQs</span> with one of our premium plans below.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
+      <!-- Weekly -->
+      <div class="plan-card bg-white p-6 rounded-xl shadow-md border text-center">
+        <h2 class="text-2xl font-bold mb-2">Weekly Plan</h2>
+        <p class="text-gray-600 mb-4">Unlimited MCQs for 7 days</p>
+        <p class="text-3xl font-bold mb-6">₹199</p>
+        <button class="btn-primary px-6 py-2 rounded-lg w-full">Choose Plan</button>
+      </div>
+
+      <!-- Monthly -->
+      <div class="plan-card popular bg-white p-6 rounded-xl shadow-md text-center">
+        <h2 class="text-2xl font-bold mb-2">Monthly Plan</h2>
+        <p class="text-gray-600 mb-4">Unlimited MCQs for 30 days</p>
+        <p class="text-3xl font-bold mb-6">₹499</p>
+        <button class="btn-primary px-6 py-2 rounded-lg w-full">Choose Plan</button>
+      </div>
+
+      <!-- Yearly -->
+      <div class="plan-card bg-white p-6 rounded-xl shadow-md border text-center">
+        <h2 class="text-2xl font-bold mb-2">Yearly Plan</h2>
+        <p class="text-gray-600 mb-4">Unlimited MCQs for 365 days</p>
+        <p class="text-3xl font-bold mb-6">₹3999</p>
+        <button class="btn-primary px-6 py-2 rounded-lg w-full">Choose Plan</button>
+      </div>
+    </div>
+
+    <div class="mt-10">
+      <a href="index.html" class="text-[#6B8A7A] font-semibold underline">← Back to MCQ Generator</a>
+    </div>
+  </div>
+</body>
+
+</html>

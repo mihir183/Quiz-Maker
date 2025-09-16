@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quize Maker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen p-6">
+  <div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-6">
+    <h1 class="text-3xl font-bold text-[#6B8A7A] mb-4">Generated MCQs</h1>
+    <pre id="mcq-output" class="bg-gray-50 border p-4 rounded-lg max-h-[500px] overflow-y-auto"></pre>
+    <div class="mt-6">
+      <a href="index.html" class="btn-primary px-6 py-2 rounded-lg">← Back</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const mcqData = localStorage.getItem("mcqsData");
+      if (!mcqData) {
+        document.getElementById("mcq-output").textContent = "No MCQs found. Please go back and try again.";
+        return;
+      }
+
+      const mcqs = JSON.parse(mcqData);
+      let out = "";
+      mcqs.forEach((q, idx) => {
+        out += `Q${idx + 1}. ${q.question}\n`;
+        if (Array.isArray(q.options)) {
+          const labels = ['A', 'B', 'C', 'D'];
+          q.options.forEach((opt, i) => {
+            out += `(${labels[i]}) ${opt}\n`;
+          });
+          const ansLabel = q.answer_index !== undefined ? `(${labels[q.answer_index]})` : '';
+          const ansText = (q.options && q.options[q.answer_index]) ? ` ${q.options[q.answer_index]}` : '';
+          out += `✅ Correct Answer: ${ansLabel}${ansText}\n`;
+        }
+        out += "\n";
+      });
+      document.getElementById("mcq-output").textContent = out;
+    });
+  </script>
+</body>
+
+</html>
