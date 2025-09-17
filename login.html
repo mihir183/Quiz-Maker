@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Maker - Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FDFBF8;
+    }
+
+    .btn-primary {
+      background-color: #6B8A7A;
+      color: #FFFFFF;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #5A7569;
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen">
+  <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+    <h1 class="text-3xl font-bold text-[#6B8A7A] mb-6 text-center">Login</h1>
+
+    <form id="login-form" class="space-y-4">
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+        <input type="text" id="username" name="username" required
+          class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-[#6B8A7A] focus:border-[#6B8A7A]">
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" name="password" required
+          class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-[#6B8A7A] focus:border-[#6B8A7A]">
+      </div>
+      <button type="submit" class="btn-primary w-full py-2 rounded-lg font-semibold">Login</button>
+    </form>
+
+    <p class="text-sm text-gray-600 text-center mt-4">
+      Don’t have an account?
+      <a href="register.html" class="text-[#6B8A7A] font-semibold underline">Register here</a>
+    </p>
+
+    <div id="login-message" class="mt-4 text-center text-sm"></div>
+  </div>
+
+  <script>
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const msgEl = document.getElementById("login-message");
+
+      msgEl.textContent = "Logging in...";
+      msgEl.className = "mt-4 text-center text-sm text-gray-600";
+
+      const form = new URLSearchParams();
+      form.append("username", username);
+      form.append("password", password);
+
+      try {
+        const resp = await fetch("http://localhost:8001/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: form
+        });
+
+        const data = await resp.json();
+
+        if (resp.ok) {
+          // ✅ Save token + username
+          localStorage.setItem("token", data.access_token);
+          localStorage.setItem("username", username);
+
+          msgEl.textContent = "✅ Login successful! Redirecting...";
+          msgEl.className = "mt-4 text-center text-sm text-green-600 font-semibold";
+
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1000);
+        } else {
+          msgEl.textContent = data.detail || "❌ Login failed. Try again.";
+          msgEl.className = "mt-4 text-center text-sm text-red-500 font-semibold";
+        }
+      } catch (err) {
+        msgEl.textContent = "Error: " + err.message;
+        msgEl.className = "mt-4 text-center text-sm text-red-500 font-semibold";
+      }
+    });
+  </script>
+</body>
+
+</html>

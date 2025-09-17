@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Maker - Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FDFBF8;
+    }
+
+    .btn-primary {
+      background-color: #6B8A7A;
+      color: #FFFFFF;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #5A7569;
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen">
+  <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+    <h1 class="text-3xl font-bold text-[#6B8A7A] mb-6 text-center">Register</h1>
+    <form id="register-form" class="space-y-4">
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+        <input type="text" id="username" name="username" required
+          class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-[#6B8A7A] focus:border-[#6B8A7A]">
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" name="password" required
+          class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-[#6B8A7A] focus:border-[#6B8A7A]">
+      </div>
+      <button type="submit" class="btn-primary w-full py-2 rounded-lg font-semibold">Register</button>
+    </form>
+
+    <p class="text-sm text-gray-600 text-center mt-4">
+      Already have an account?
+      <a href="login.html" class="text-[#6B8A7A] font-semibold underline">Login here</a>
+    </p>
+
+    <div id="register-message" class="mt-4 text-center text-sm text-red-500"></div>
+  </div>
+
+  <script>
+    document.getElementById("register-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const form = new FormData();
+      form.append("username", username);
+      form.append("password", password);
+
+      try {
+        const resp = await fetch("http://localhost:8001/register", {
+          method: "POST",
+          body: form
+        });
+
+        const data = await resp.json();
+        if (resp.ok) {
+          document.getElementById("register-message").textContent = "✅ Registered successfully! Redirecting to login...";
+          setTimeout(() => window.location.href = "login.html", 1500);
+        } else {
+          document.getElementById("register-message").textContent = data.detail || "Registration failed";
+        }
+      } catch (err) {
+        document.getElementById("register-message").textContent = "Error: " + err.message;
+      }
+    });
+  </script>
+</body>
+
+</html>
